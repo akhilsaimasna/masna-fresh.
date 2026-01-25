@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+    /* Arya Commercial Palette (White & Black) */
+    --color-background: #FFFFFF;
+    --color-foreground: #000000;
+
+    --color-primary: #000000;
+    --color-primary-foreground: #FFFFFF;
+
+    --color-secondary: #F5F5F5;
+    --color-secondary-foreground: #000000;
+
+    --color-accent: #D32F2F;
+    /* Sale Red */
+    --color-accent-foreground: #FFFFFF;
+
+    --color-muted: #9CA3AF;
+    --color-border: #E5E5E5;
+
+    /* Typography */
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+    --font-heading: var(--font-playfair), serif;
+    --font-body: var(--font-inter), ui-sans-serif, system-ui;
+
+    --animate-fade-in: fadeIn 0.5s ease-out;
+    --animate-slide-up: slideUp 0.5s ease-out;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
+
+/* Base Styles */
+@layer base {
+    body {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+        font-family: var(--font-body);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+    }
+}
