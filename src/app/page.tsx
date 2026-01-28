@@ -1,16 +1,18 @@
 import Hero from "@/components/Hero";
 import WelcomeOverlay from "@/components/WelcomeOverlay";
 import ProductCarousel from "@/components/ProductCarousel";
-import { products } from "@/data/products";
+import { getProducts, getBestSellers } from "@/actions/products";
 import { COLLECTIONS } from "@/data/collections";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-export default function Home() {
-  // Mock Filtering for now (In real app, filter by collection/category)
-  const newArrivals = products.slice(0, 4);
-  const bestSellers = products.filter(p => p.best_seller);
-  const silkSarees = products.filter(p => p.category === "Sarees" || p.category === "Silk"); // Mock for Gadwal/Banarasi since no data yet
+export default async function Home() {
+  // Fetch real data from Supabase
+  const newArrivals = await getProducts(undefined, 4);
+  const bestSellers = await getBestSellers(4);
+  // For specific categories, we can fetch by category name if it exists in DB, 
+  // or just show generic "Silk" ones if specific sub-types aren't tagged yet.
+  const silkSarees = await getProducts("Silk", 4);
 
   return (
     <div className="min-h-screen bg-white text-black font-sans flex flex-col">

@@ -10,7 +10,7 @@ export default function AdminLogin() {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === "admin123") {
+        if (password === (process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "admin")) {
             // In a real app, we'd set a cookie/token here
             localStorage.setItem("isAdmin", "true");
             router.push("/admin/dashboard");
