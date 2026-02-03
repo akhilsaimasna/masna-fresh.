@@ -34,11 +34,13 @@ function AccordionItem({ title, children }: { title: string; children: React.Rea
 export default async function ProductPage({ params }: Props) {
     // Await the params promise
     const resolvedParams = await params;
-    const { data: productData, error } = await supabase
+    const { data: products, error } = await supabase
         .from("products")
         .select("*")
         .eq("slug", resolvedParams.slug)
-        .single();
+        .limit(1);
+
+    const productData = products?.[0];
 
     if (error || !productData) {
         // Fallback for demo purposes if Supabase fails (since we are using dummy data on home)

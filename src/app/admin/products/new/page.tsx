@@ -16,7 +16,7 @@ export default function NewProductPage() {
         price_usd: "",
         category: "Silk",
         description: "",
-        image_url: "",
+        images: [] as string[],
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -28,30 +28,43 @@ export default function NewProductPage() {
 
         try {
             setUploading(true);
-            const file = e.target.files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-            const filePath = `${fileName}`;
+            const files = Array.from(e.target.files);
+            const newImageUrls: string[] = [];
 
-            // Upload
-            const { error: uploadError } = await supabase.storage
-                .from('product-images')
-                .upload(filePath, file);
+            for (const file of files) {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+                const filePath = `${fileName}`;
 
-            if (uploadError) throw uploadError;
+                // Upload
+                const { error: uploadError } = await supabase.storage
+                    .from('product-images')
+                    .upload(filePath, file);
 
-            // Get Public URL
-            const { data } = supabase.storage
-                .from('product-images')
-                .getPublicUrl(filePath);
+                if (uploadError) throw uploadError;
 
-            setFormData(prev => ({ ...prev, image_url: data.publicUrl }));
+                // Get Public URL
+                const { data } = supabase.storage
+                    .from('product-images')
+                    .getPublicUrl(filePath);
+
+                newImageUrls.push(data.publicUrl);
+            }
+
+            setFormData(prev => ({ ...prev, images: [...prev.images, ...newImageUrls] }));
         } catch (error) {
             console.error('Error uploading image:', error);
             alert('Error uploading image!');
         } finally {
             setUploading(false);
         }
+    };
+
+    const removeImage = (indexToRemove: number) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, index) => index !== indexToRemove)
+        }));
     };
 
     function generateSlug(name: string) {
@@ -75,7 +88,7 @@ export default function NewProductPage() {
                 price_usd: parseFloat(formData.price_usd),
                 category: formData.category,
                 description: formData.description,
-                images: [formData.image_url],
+                images: formData.images,
                 in_stock: true,
                 featured: false,
                 best_seller: false
@@ -154,6 +167,8 @@ export default function NewProductPage() {
                                 <option value="Party Wear">Party Wear</option>
                                 <option value="Bridal">Bridal</option>
                                 <option value="Daily Wear">Daily Wear</option>
+                                <option value="Sarees">Sarees</option>
+                                <option value="Lehengas">Lehengas</option>
                             </select>
                         </div>
 
@@ -170,52 +185,57 @@ export default function NewProductPage() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
 
-                            {/* Preview */}
-                            {formData.image_url ? (
-                                <div className="mb-4 relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                                    <Image
-                                        src={formData.image_url}
-                                        alt="Preview"
-                                        fill
-                                        className="object-contain"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData({ ...formData, image_url: "" })}
-                                        className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={uploading}
-                                        className="hidden"
-                                        id="image-upload"
-                                    />
-                                    <label
-                                        htmlFor="image-upload"
-                                        className="cursor-pointer flex flex-col items-center"
-                                    >
-                                        <span className="text-gray-500 mb-2">
-                                            {uploading ? "Uploading..." : "Click to upload image"}
-                                        </span>
-                                        <span className="text-xs text-gray-400">JPG, PNG, WEBP</span>
-                                    </label>
+                            {/* Preview Grid */}
+                            {formData.images.length > 0 && (
+                                <div className="grid grid-cols-3 gap-4 mb-4">
+                                    {formData.images.map((url, index) => (
+                                        <div key={index} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                                            <Image
+                                                src={url}
+                                                alt={`Preview ${index}`}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(index)}
+                                                className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 text-red-500"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
+
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageUpload}
+                                    disabled={uploading}
+                                    className="hidden"
+                                    id="image-upload"
+                                />
+                                <label
+                                    htmlFor="image-upload"
+                                    className="cursor-pointer flex flex-col items-center"
+                                >
+                                    <span className="text-gray-500 mb-2">
+                                        {uploading ? "Uploading..." : "Click to upload images"}
+                                    </span>
+                                    <span className="text-xs text-gray-400">Select multiple files supported</span>
+                                </label>
+                            </div>
                         </div>
 
                         <div className="pt-4">
                             <button
                                 type="submit"
-                                disabled={loading || uploading || !formData.image_url}
+                                disabled={loading || uploading || formData.images.length === 0}
                                 className="w-full bg-gray-900 hover:bg-black text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? "Saving..." : "Save Product"}
