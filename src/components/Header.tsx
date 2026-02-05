@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { useState, useEffect } from "react";
-import { Search, ShoppingBag, Menu, X, User, Phone, ChevronDown } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, User, Phone, ChevronDown, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { COLLECTIONS, OTHER_CATEGORIES } from "@/data/collections";
 
 export default function Header() {
   const { cartCount } = useCart();
+  const { t, language, setLanguage } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sareesMenuOpen, setSareesMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -16,6 +18,10 @@ export default function Header() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'en' ? 'te' : 'en');
+  };
 
   return (
     <>
@@ -47,7 +53,7 @@ export default function Header() {
           {/* Desktop Navigation - Centered Mega Menu */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link href="/" className="text-sm font-medium uppercase tracking-wide text-gray-700 hover:text-black transition-colors">
-              Home
+              {t.common.home}
             </Link>
 
             {/* Collections Mega Menu Trigger */}
@@ -57,7 +63,7 @@ export default function Header() {
               onMouseLeave={() => setSareesMenuOpen(false)}
             >
               <button className="flex items-center gap-1 text-sm font-medium uppercase tracking-wide text-gray-700 hover:text-black transition-colors py-6">
-                Sarees (శారీలు) <ChevronDown size={14} />
+                {t.common.sarees} <ChevronDown size={14} />
               </button>
 
               {/* Mega Menu Dropdown */}
@@ -89,26 +95,30 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            {OTHER_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/collections/${cat.slug}`}
-                className="text-sm font-medium uppercase tracking-wide text-gray-700 hover:text-black transition-colors"
-              >
-                {cat.name}
-              </Link>
-            ))}
+            {/* Static links mapped to translations if possible, otherwise hardcoded or mapped */}
+            <Link href="/collections/jewellery" className="text-sm font-medium uppercase tracking-wide text-gray-700 hover:text-black transition-colors">
+              {t.common.jewellery}
+            </Link>
+            <Link href="/collections/lehengas" className="text-sm font-medium uppercase tracking-wide text-gray-700 hover:text-black transition-colors">
+              {t.common.lehengas}
+            </Link>
 
             <Link href="/orders" className="text-sm font-medium uppercase tracking-wide text-gray-700 hover:text-black transition-colors">
-              My Orders
+              {t.common.myOrders}
             </Link>
             <Link href="/collections/sale" className="text-sm font-medium uppercase tracking-wide text-red-700 hover:text-red-900 transition-colors">
-              Sale
+              {t.common.sale}
             </Link>
           </nav>
 
           {/* Icons */}
           <div className="flex items-center space-x-5 z-20">
+            {/* Language Switcher Desktop */}
+            <button onClick={toggleLanguage} className="hidden md:flex items-center gap-1 text-xs font-bold uppercase tracking-widest hover:text-[#800000]">
+              <Globe size={16} />
+              {language === 'en' ? 'TE' : 'EN'}
+            </button>
+
             <button className="hidden md:block text-black hover:text-gray-600 transition-colors">
               <Search size={20} strokeWidth={1.5} />
             </button>
@@ -137,8 +147,16 @@ export default function Header() {
             transition={{ type: "tween", duration: 0.3 }}
             className="fixed inset-0 z-[60] bg-white flex flex-col md:hidden overflow-y-auto"
           >
-            <div className="flex justify-between items-center p-4 border-b border-gray-100">
-              <span className="font-heading text-xl font-bold">Menu</span>
+            <div className="flex justify-between items-center p-4 border-b border-gray-100 bg-gray-50">
+              {/* Language Switcher Mobile */}
+              <button
+                onClick={toggleLanguage}
+                className="flex items-center gap-2 px-3 py-1 bg-white border border-gray-200 rounded-full text-xs font-bold shadow-sm"
+              >
+                <Globe size={14} />
+                <span>{language === 'en' ? 'Switch to Telugu' : 'Switch to English'}</span>
+              </button>
+
               <button onClick={() => setMobileMenuOpen(false)}>
                 <X size={24} />
               </button>
@@ -146,11 +164,11 @@ export default function Header() {
 
             <nav className="flex flex-col p-6 space-y-6">
               <Link href="/" className="text-lg font-bold uppercase border-b border-gray-100 pb-2" onClick={() => setMobileMenuOpen(false)}>
-                Home
+                {t.common.home}
               </Link>
 
               <div className="flex flex-col space-y-4">
-                <span className="text-sm font-bold text-[#B08D57] uppercase tracking-widest">Sarees Collection</span>
+                <span className="text-sm font-bold text-[#B08D57] uppercase tracking-widest">{t.common.sarees}</span>
                 {COLLECTIONS.map((col) => (
                   <Link
                     key={col.slug}
@@ -166,23 +184,27 @@ export default function Header() {
 
               <div className="border-t border-gray-100 my-4"></div>
 
-              {OTHER_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/collections/${cat.slug}`}
-                  className="text-lg font-medium text-black"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {cat.name}
-                </Link>
-              ))}
+              <Link
+                href="/collections/jewellery"
+                className="text-lg font-medium text-black"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t.common.jewellery}
+              </Link>
+              <Link
+                href="/collections/lehengas"
+                className="text-lg font-medium text-black"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t.common.lehengas}
+              </Link>
 
               <Link
                 href="/orders"
                 className="text-lg font-medium text-black"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                My Orders
+                {t.common.myOrders}
               </Link>
             </nav>
 
