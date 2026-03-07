@@ -17,8 +17,11 @@ export default function WhatsAppButton({ product, variant = "primary", className
     const { user } = useAuth();
     const router = useRouter();
 
+    const productImage = product.images && product.images.length > 0 ? product.images[0] : "";
+    const productPageUrl = `https://shyamala-sarees.vercel.app/products/${product.slug}`;
+
     const whatsappMessage = encodeURIComponent(
-        `హాయ్ Shyamala Sarees 😊\nనాకు ఈ శారీ కావాలి.\n👉 శారీ పేరు: ${product.name}\n👉 ధర: ₹${product.price_inr}\n👉 బడ్జెట్: ₹${product.price_inr}\nమీ దగ్గర ఉన్న best collection పంపండి 🙏`
+        `హాయ్ Shyamala Sarees 😊\nనాకు ఈ శారీ కావాలి.\n\n👉 శారీ పేరు: ${product.name}\n👉 ధర: ₹${product.price_inr}\n👉 Category: ${product.category}\n\n🔗 Product Link: ${productPageUrl}\n\n🖼️ Product Image:\n${productImage}\n\nమీ దగ్గర ఉన్న best collection పంపండి 🙏`
     );
 
     const href = `https://wa.me/919440653443?text=${whatsappMessage}`;
