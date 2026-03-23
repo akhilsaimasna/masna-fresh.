@@ -15,12 +15,21 @@ export default function CartPage() {
         setMounted(true);
     }, []);
 
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://shyamalasarees.com";
+
     const whatsappMessage = encodeURIComponent(
         `Hello Shyamala Sarees! 🌸\n` +
-        `I would like to order the following items:\n\n` +
-        cart.map((item, i) => `${i + 1}. ${item.name} - ₹${item.price_inr}`).join("\n") +
-        `\n\nTotal: ₹${cartTotal.toLocaleString()}\n` +
-        `Please confirm availability.`
+        `I would like to order the following sarees:\n\n` +
+        cart.map((item, i) =>
+            `*${i + 1}. ${item.name}*\n` +
+            `   🏷️ Category: ${item.category}\n` +
+            `   💰 Price: ₹${item.price_inr.toLocaleString()} × ${item.quantity}\n` +
+            (item.images && item.images.length > 0 ? `   🖼️ Image: ${item.images[0]}\n` : ``) +
+            `   🔗 Link: ${baseUrl}/products/${item.slug}`
+        ).join("\n\n") +
+        `\n\n` +
+        `💳 *Total Amount: ₹${cartTotal.toLocaleString()}*\n` +
+        `📦 Please confirm availability and share delivery details. 🙏`
     );
 
     if (!mounted) return null;

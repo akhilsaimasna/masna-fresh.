@@ -15,8 +15,18 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
     const hasImage = product.images && product.images.length > 0 && product.images[0].startsWith("http");
 
+    const productUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shyamalasarees.com"}/products/${product.slug}`;
+
     const whatsappMessage = encodeURIComponent(
-        `హాయ్ Shyamala Sarees 😊\nనాకు ఈ శారీ కావాలి.\n👉 శారీ పేరు: ${product.name}\n👉 ధర: ₹${product.price_inr}\n👉 బడ్జెట్: ₹${product.price_inr}\nమీ దగ్గర ఉన్న best collection పంపండి 🙏`
+        `Hello Shyamala Sarees! 🌸\n` +
+        `I would like to order the following saree:\n\n` +
+        `👗 *Saree Name:* ${product.name}\n` +
+        `🏷️ *Category:* ${product.category}\n` +
+        `💰 *Price:* ₹${product.price_inr.toLocaleString()}\n` +
+        (product.description ? `📝 *Details:* ${product.description}\n` : ``) +
+        (product.images && product.images.length > 0 ? `🖼️ *Image:* ${product.images[0]}\n` : ``) +
+        `🔗 *Product Link:* ${productUrl}\n\n` +
+        `Please confirm availability and delivery details. 🙏`
     );
 
     // Calculate random discount for demo if not present

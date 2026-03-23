@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 300px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      background-color: #0f172a;
+      color: white;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .dot-red {
+      background-color: #f87171;
+    }
+
+    .dot-green {
+      background-color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    button:disabled {
+      background: #334155;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .footer-text {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" style="color: #60a5fa;">
+      <path
+        d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+    </svg>
+    <h1>OpenClaw Auto-Fill</h1>
+  </div>
+
+  <div class="status-card" id="status-container">
+    <div style="margin-bottom: 8px;">
+      <span class="status-dot dot-red" id="auth-dot"></span>
+      <span id="auth-status">Checking App Connection...</span>
+    </div>
+    <div>
+      <span class="status-dot dot-red" id="page-dot"></span>
+      <span id="page-status">Waiting for job board...</span>
+    </div>
+  </div>
+
+  <button id="autofill-btn" disabled>✨ Auto-Fill this Application</button>
+
+  <div class="footer-text">
+    Make sure you are logged into <a href="http://localhost:3000/dashboard" target="_blank">OpenClaw</a> first.
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
