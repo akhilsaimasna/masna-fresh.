@@ -2,9 +2,6 @@
 
 import { Product } from "@/types";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 
 interface WhatsAppButtonProps {
     product: Product;
@@ -14,45 +11,21 @@ interface WhatsAppButtonProps {
 }
 
 export default function WhatsAppButton({ product, variant = "primary", className, children }: WhatsAppButtonProps) {
-    const { user } = useAuth();
-    const router = useRouter();
-
     const productImage = product.images && product.images.length > 0 ? product.images[0] : "";
-    const productPageUrl = `https://shyamala-sarees.vercel.app/products/${product.slug}`;
+    const productPageUrl = `https://shyamalasarees.com/products/${product.slug}`;
 
     const whatsappMessage = encodeURIComponent(
-        `హాయ్ Shyamala Sarees 😊\nనాకు ఈ శారీ కావాలి.\n\n👉 శారీ పేరు: ${product.name}\n👉 ధర: ₹${product.price_inr}\n👉 Category: ${product.category}\n\n🔗 Product Link: ${productPageUrl}\n\n🖼️ Product Image:\n${productImage}\n\nమీ దగ్గర ఉన్న best collection పంపండి 🙏`
+        `Hello Shyamala Sarees! 🌸\nI would like to order the following saree:\n\n` +
+        `👗 *Saree Name:* ${product.name}\n` +
+        `🏷️ *Category:* ${product.category}\n` +
+        `💰 *Price:* ₹${product.price_inr.toLocaleString()}\n` +
+        (product.description ? `📝 *Details:* ${product.description}\n` : ``) +
+        (productImage ? `🖼️ *Image:* ${productImage}\n` : ``) +
+        `🔗 *Product Link:* ${productPageUrl}\n\n` +
+        `Please confirm availability and delivery details. 🙏`
     );
 
     const href = `https://wa.me/919440653443?text=${whatsappMessage}`;
-
-    const handleClick = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (!user) {
-            // Redirect to login if not authenticated
-            router.push("/login");
-            return;
-        }
-
-        // Track Order in Supabase
-        try {
-            await supabase.from('orders').insert({
-                user_id: user.id,
-                product_id: product.id || product.slug, // Use slug if ID not available
-                product_name: product.name,
-                price: product.price_inr,
-                status: 'clicked_whatsapp'
-            });
-        } catch (err) {
-            console.error("Error tracking order:", err);
-            // We proceed to WhatsApp even if tracking fails (don't block sales)
-        }
-
-        // Open WhatsApp
-        window.open(href, '_blank');
-    };
 
     if (variant === "card") {
         return (
@@ -60,7 +33,6 @@ export default function WhatsAppButton({ product, variant = "primary", className
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={handleClick}
                 className={className}
             >
                 {children || "WhatsApp Order"}
@@ -68,7 +40,6 @@ export default function WhatsAppButton({ product, variant = "primary", className
         );
     }
 
-    // Default Primary Style
     const defaultStyles = "w-full border border-[#D4AF37] text-[#800000] hover:bg-[#D4AF37]/10 font-medium py-4 uppercase tracking-[0.2em] text-center transition-colors flex items-center justify-center gap-2 text-sm";
 
     return (
@@ -76,7 +47,6 @@ export default function WhatsAppButton({ product, variant = "primary", className
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={handleClick}
             className={cn(defaultStyles, className)}
         >
             {children || "WhatsApp లో ఆర్డర్ చేయండి"}
