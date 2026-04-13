@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LanguageModal from "@/components/LanguageModal";
+import ChatBot from "@/components/ChatBot";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
                         <Header />
                         {children}
                         <Footer />
+                        <ChatBot />
                     </CartProvider>
                 </LanguageProvider>
             </body>
