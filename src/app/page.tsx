@@ -10,9 +10,6 @@ export default async function Home() {
   // Fetch real data from Supabase
   const newArrivals = await getProducts(undefined, 4);
   const bestSellers = await getBestSellers(4);
-  // For specific categories, we can fetch by category name if it exists in DB, 
-  // or just show generic "Silk" ones if specific sub-types aren't tagged yet.
-  const silkSarees = await getProducts("Silk", 4);
 
   return (
     <div className="min-h-screen bg-white text-black font-sans flex flex-col">
@@ -84,9 +81,7 @@ export default async function Home() {
 
         <ProductCarousel title="Best Sellers" products={bestSellers} viewAllLink="/collections/best-sellers" />
 
-        <ProductCarousel title="Gadwal Silk Sarees (గద్వాల్ పట్టు)" products={silkSarees} viewAllLink="/collections/gadwal-silk" />
 
-        <ProductCarousel title="Banarasi Sarees (బనారస్ పట్టు)" products={silkSarees} viewAllLink="/collections/banarasi-silk" />
 
         {/* Personal Saree Styling Service */}
         <section className="py-20 bg-[#FAF7F2] border-t border-gold/10">
