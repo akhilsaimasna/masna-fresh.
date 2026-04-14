@@ -40,15 +40,26 @@ export default function ProductCard({ product }: ProductCardProps) {
         : null;
 
     return (
-        <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl shadow-sm border border-gray-100 hover:border-[#B08D57]/30 flex flex-col">
+        <div className="group relative bg-white rounded-xl overflow-hidden transition-shadow duration-500 hover:shadow-xl shadow-sm border border-gray-100 hover:border-[#B08D57]/30 flex flex-col">
 
-            {/* Gold bottom border that animates in on hover */}
-            <div className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full bg-gradient-to-r from-[#B08D57] to-[#D4AF37] transition-all duration-500 z-10" />
+            {/* Gold bottom border that slides in on hover */}
+            <div className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full bg-[#B08D57] transition-all duration-500 z-10" />
 
-            {/* Wishlist Button */}
-            <button className="absolute top-3 right-3 z-20 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#800000] text-gray-400 transition-all duration-200 shadow-sm opacity-0 group-hover:opacity-100">
-                <Heart size={15} />
-            </button>
+            {/* Top-Right WhatsApp Icon on Hover */}
+            {product.in_stock && (
+                <a
+                    href={`https://wa.me/919440653443?text=${whatsappMessage}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        import("@/lib/orders").then(mod => mod.saveOrder(product));
+                    }}
+                    className="absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 shadow-md opacity-0 group-hover:opacity-100"
+                >
+                    <MessageCircle size={16} />
+                </a>
+            )}
 
             {/* Discount Badge */}
             {discount !== null && product.in_stock && (
@@ -74,7 +85,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             src={product.images[0]}
                             alt={product.name}
                             loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                            className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                             onError={() => setImgError(true)}
                         />
                     ) : (
@@ -93,13 +104,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </p>
 
                     {/* Product Name — serif */}
-                    <h3 className="font-heading text-[15px] text-[#1a1a1a] leading-snug mb-3">
+                    <h3 className="font-heading font-medium text-[15px] text-[#1a1a1a] leading-snug mb-3">
                         {displayName}
                     </h3>
 
                     {/* Price Row */}
                     <div className="flex items-baseline gap-2 flex-wrap mb-1">
-                        <span className="text-lg font-bold text-[#1a1a1a]">
+                        <span className="text-xl font-bold text-[#1a1a1a]">
                             ₹{product.price_inr.toLocaleString()}
                         </span>
                         {discount !== null && compareAtPrice && (
