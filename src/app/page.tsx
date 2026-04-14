@@ -77,9 +77,18 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* OUR STORY SECTION */}
-        <section className="py-20 bg-[#FAF7F2]">
-          <div className="container mx-auto px-4 lg:px-8">
+
+
+        {/* CAROUSELS */}
+        <ProductCarousel title="New Arrivals" products={newArrivals} viewAllLink="/collections/new-arrivals" />
+
+        <ProductCarousel title="Best Sellers" products={bestSellers} viewAllLink="/collections/best-sellers" />
+
+
+
+        {/* OUR STORY & STYLING COMBINED SECTION */}
+        <section className="py-20 bg-[#FAF7F2] border-t border-[#B08D57]/20">
+          <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
             <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
               
               {/* Left Image */}
@@ -95,20 +104,25 @@ export default async function Home() {
               {/* Right Content */}
               <div className="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left">
                 <span className="text-[#B08D57] font-bold text-xs uppercase tracking-[0.3em] mb-4 block">
-                  Est. In Kalwakurthy
+                  Est. In Kalwakurthy • Concierge Service
                 </span>
                 
                 <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-tight mb-8">
                   A Family Tradition,<br className="hidden lg:block"/> Delivered to Your Door
                 </h2>
                 
-                <p className="text-gray-600 font-light text-lg leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
-                  Shyamala Sarees is a family store from Kalwakurthy, Telangana, run by my mother Shyamala with love and dedication. For over two decades, she has been handpicking the finest silk sarees — Kanjivaram, Gadwal, Banarasi — directly from weavers. We bring you authentic, heirloom-quality sarees at honest prices, delivered personally via WhatsApp.
-                </p>
+                <div className="text-gray-600 font-light text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0 space-y-4">
+                  <p>
+                    Shyamala Sarees is a family store from Kalwakurthy, Telangana, run by my mother Shyamala with love and dedication. For over two decades, she has been handpicking the finest silk sarees — Kanjivaram, Gadwal, Banarasi — directly from weavers.
+                  </p>
+                  <p className="font-medium text-[#1a1a1a]">
+                    Need help deciding? Tell us your budget & occasion. We’ll share curated picks from our exclusive store collection in minutes so you can experience the luxury of shopping from home.
+                  </p>
+                </div>
                 
                 <div className="flex justify-center lg:justify-start">
                   <a 
-                    href="https://wa.me/919440653443" 
+                    href="https://wa.me/919440653443?text=Hi%20Shyamala%20Sarees,%20I%20would%20like%20personal%20styling%20assistance." 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center px-8 py-4 border border-[#B08D57] text-[#B08D57] hover:bg-[#B08D57] hover:text-white transition-colors duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
@@ -119,33 +133,6 @@ export default async function Home() {
               </div>
 
             </div>
-          </div>
-        </section>
-
-        {/* CAROUSELS */}
-        <ProductCarousel title="New Arrivals" products={newArrivals} viewAllLink="/collections/new-arrivals" />
-
-        <ProductCarousel title="Best Sellers" products={bestSellers} viewAllLink="/collections/best-sellers" />
-
-
-
-        {/* Personal Saree Styling Service */}
-        <section className="py-20 bg-[#FAF7F2] border-t border-gold/10">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <span className="text-gold text-xs uppercase tracking-[0.3em] font-medium mb-4 block">Concierge Service</span>
-            <h2 className="font-heading text-4xl md:text-5xl text-charcoal mb-6">Personal Saree Styling</h2>
-            <p className="text-charcoal/60 text-lg mb-10 leading-relaxed font-light">
-              Tell us your budget & occasion. We’ll share curated picks from our exclusive store collection in minutes.
-              <br className="hidden md:block" /> Experience the luxury of shopping from home using WhatsApp.
-            </p>
-            <a
-              href="https://wa.me/919440653443?text=Hi%20Shyamala%20Sarees,%20I%20would%20like%20personal%20styling%20assistance."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-12 px-8 bg-charcoal text-white text-sm font-medium tracking-widest uppercase hover:bg-gold transition-colors duration-500 rounded-sm"
-            >
-              Chat on WhatsApp
-            </a>
           </div>
         </section>
       </main>
