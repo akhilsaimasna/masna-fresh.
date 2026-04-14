@@ -25,7 +25,7 @@ export default function CollectionsPage() {
                 {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {COLLECTIONS.map((col, index) => (
-                        <Link href={`/collections/${col.slug}`} key={col.slug} className="group block relative overflow-hidden h-[300px] border border-gray-100 bg-gray-50 hover:shadow-xl transition-all duration-500">
+                        <Link href={`/collections/${col.slug}`} key={col.slug} className="group block relative overflow-hidden h-[340px] rounded-xl border border-transparent hover:border-[#B08D57]/40 bg-gray-50 shadow-md hover:shadow-2xl transition-all duration-500">
 
                             {/* Collection Image Background */}
                             <div className="absolute inset-0 bg-gray-100 group-hover:scale-105 transition-transform duration-700">
