@@ -57,13 +57,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                         />
                     )}
 
-                    {/* Rating Pill (Myntra style) */}
-                    <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-[2px] text-[10px] font-bold flex items-center gap-1 shadow-sm opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span>4.5</span>
-                        <span className="text-teal-500">★</span>
-                        <span className="font-normal text-gray-500 border-l border-gray-300 pl-1 ml-1">1.2k</span>
-                    </div>
-
                     {/* WhatsApp Overlay Button (Desktop Hover) */}
                     <div className="hidden md:flex absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur py-3 items-center justify-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 border-t border-gray-100">
                         <div className="flex flex-col gap-2 w-full px-4">
