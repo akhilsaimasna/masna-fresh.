@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Instagram, Facebook } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -13,13 +14,13 @@ export default function Footer() {
                             సంప్రదాయం మరియు నమ్మకం మా ప్రత్యేకత.
                         </p>
                         <div className="flex justify-center md:justify-start space-x-4">
-                            {/* Social Placeholders */}
-                            <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#B08D57] transition-colors cursor-pointer">
-                                <span className="sr-only">Instagram</span>
-                            </div>
-                            <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#B08D57] transition-colors cursor-pointer">
-                                <span className="sr-only">Facebook</span>
-                            </div>
+                            {/* Social Links */}
+                            <a href="https://instagram.com/shyamalasarees" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#B08D57] transition-colors">
+                                <Instagram size={16} className="text-white" />
+                            </a>
+                            <a href="https://facebook.com/shyamalasarees" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#B08D57] transition-colors">
+                                <Facebook size={16} className="text-white" />
+                            </a>
                         </div>
                     </div>
 
