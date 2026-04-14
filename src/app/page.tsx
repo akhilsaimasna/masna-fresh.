@@ -5,7 +5,7 @@ import { getProducts, getBestSellers } from "@/actions/products";
 import { COLLECTIONS } from "@/data/collections";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Quote } from "lucide-react";
 
 export default async function Home() {
   // Fetch real data from Supabase
@@ -132,6 +132,53 @@ export default async function Home() {
                 </div>
               </div>
 
+            </div>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS SECTION */}
+        <section className="py-20 bg-[#1B1B1B]">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <div className="text-center mb-16">
+              <h2 className="text-[#B08D57] font-heading text-3xl md:text-4xl font-bold uppercase tracking-widest mb-4">
+                What Our Customers Say
+              </h2>
+              <p className="text-gray-400 font-light text-sm md:text-base tracking-wide">
+                Real reviews from real customers across India
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                  {
+                    quote: "I ordered a Kanjivaram for my daughter's wedding. The quality was beyond expectations. Shyamala garu personally guided me through WhatsApp!",
+                    name: "Lakshmi Devi",
+                    city: "Hyderabad"
+                  },
+                  {
+                    quote: "Best silk sarees at the most honest prices. No middlemen, direct from the store. I have ordered 5 times already!",
+                    name: "Anitha Reddy",
+                    city: "Bangalore"
+                  },
+                  {
+                    quote: "The saree arrived beautifully packed. Exactly as shown. Loved the personal touch of the handwritten note inside!",
+                    name: "Suma Rao",
+                    city: "Chennai"
+                  }
+              ].map((t, index) => (
+                <div key={index} className="bg-[#2A2A2A] rounded-xl p-8 flex flex-col border border-transparent hover:border-[#B08D57] hover:shadow-xl hover:shadow-[#B08D57]/20 transition-all duration-300">
+                  <div className="mb-6 text-white/20">
+                     <Quote size={40} className="fill-current" />
+                  </div>
+                  <p className="text-white/90 font-light leading-relaxed mb-8 flex-grow">
+                    "{t.quote}"
+                  </p>
+                  <div className="mt-auto">
+                    <p className="text-[#B08D57] font-semibold tracking-wide">{t.name}</p>
+                    <p className="text-gray-500 text-sm mt-1">{t.city}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
