@@ -350,12 +350,18 @@ export default function AgentPage() {
         setSteps([]);
         setJobs([]);
 
-        const params = new URLSearchParams();
-        if (keywords.trim()) params.set('keywords', keywords);
-        const url = `/api/agent/run${params.toString() ? `?${params}` : ''}`;
+        const url = '/api/agent/run';
+        const body = keywords.trim()
+            ? JSON.stringify({ keywords: keywords.split(',').map((k) => k.trim()).filter(Boolean) })
+            : JSON.stringify({});
 
         try {
-            const res = await fetch(url, { signal: abort.signal });
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body,
+                signal: abort.signal,
+            });
 
             if (!res.ok) {
                 const text = await res.text();

@@ -14,7 +14,7 @@ function encode(data: object) {
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
     // ── Auth & clients must be created BEFORE the stream ──
     let supabase: Awaited<ReturnType<typeof createClient>>;
     let serviceClient: Awaited<ReturnType<typeof createServiceClient>>;
@@ -36,11 +36,13 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Unauthorized — please log in' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const keywordsParam = searchParams.get('keywords');
-    const keywords = keywordsParam
-        ? keywordsParam.split(',').map((k) => k.trim()).filter(Boolean)
-        : [];
+    let keywords: string[] = [];
+    try {
+        const body = await request.json();
+        if (Array.isArray(body.keywords)) keywords = body.keywords;
+    } catch {
+        // no body is fine
+    }
 
     const stream = new ReadableStream({
         async start(controller) {

@@ -4,6 +4,7 @@ import ProductCarousel from "@/components/ProductCarousel";
 import { getProducts, getBestSellers } from "@/actions/products";
 import { COLLECTIONS } from "@/data/collections";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 export default async function Home() {
@@ -72,6 +73,51 @@ export default async function Home() {
               <Link href="/collections" className="inline-flex items-center gap-2 px-8 py-3 bg-charcoal text-white text-sm font-bold uppercase tracking-widest hover:bg-[#B08D57] transition-colors rounded-sm">
                 View Full Catalog
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* OUR STORY SECTION */}
+        <section className="py-20 bg-[#FAF7F2]">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              
+              {/* Left Image */}
+              <div className="w-full lg:w-1/2 relative h-[400px] md:h-[500px] lg:h-[600px] rounded-sm overflow-hidden shadow-xl">
+                <Image 
+                  src="/brand/kanjivaram-hero.jpg" 
+                  alt="Shyamala Sarees Collection" 
+                  fill 
+                  className="object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+
+              {/* Right Content */}
+              <div className="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left">
+                <span className="text-[#B08D57] font-bold text-xs uppercase tracking-[0.3em] mb-4 block">
+                  Est. In Kalwakurthy
+                </span>
+                
+                <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-tight mb-8">
+                  A Family Tradition,<br className="hidden lg:block"/> Delivered to Your Door
+                </h2>
+                
+                <p className="text-gray-600 font-light text-lg leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
+                  Shyamala Sarees is a family store from Kalwakurthy, Telangana, run by my mother Shyamala with love and dedication. For over two decades, she has been handpicking the finest silk sarees — Kanjivaram, Gadwal, Banarasi — directly from weavers. We bring you authentic, heirloom-quality sarees at honest prices, delivered personally via WhatsApp.
+                </p>
+                
+                <div className="flex justify-center lg:justify-start">
+                  <a 
+                    href="https://wa.me/919440653443" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-8 py-4 border border-[#B08D57] text-[#B08D57] hover:bg-[#B08D57] hover:text-white transition-colors duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
+                  >
+                    Chat With Us on WhatsApp
+                  </a>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
