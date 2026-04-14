@@ -1,12 +1,13 @@
 export interface Product {
     id: string;
     name: string;
+    name_te?: string;        // Telugu name (optional)
     slug: string;
     price_inr: number;
     price_usd: number;
     category: "Silk" | "Cotton" | "Party Wear" | "Bridal" | "Daily Wear" | "Sarees" | "Lehengas" | "Jewellery" | "Kids";
-    collection?: string; // e.g. "Gadwal Silk", "Banarasi"
-    subCategory?: string; // e.g. "Premium Gadwal"
+    collection?: string;
+    subCategory?: string;
     description: string;
     images: string[];
     in_stock: boolean;

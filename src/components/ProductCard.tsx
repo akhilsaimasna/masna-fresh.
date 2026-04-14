@@ -7,6 +7,7 @@ import PremiumPlaceholder from "./PremiumPlaceholder";
 import { Heart, MessageCircle } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductCardProps {
     product: Product;
@@ -14,6 +15,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     const [imgError, setImgError] = useState(false);
+    const { language } = useLanguage();
+    // Show Telugu name if language is Telugu and name_te exists, else show English
+    const displayName = language === 'te' && product.name_te ? product.name_te : product.name;
     const hasImage = !imgError && product.images && product.images.length > 0 && product.images[0].startsWith("http");
 
     const productUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shyamalasarees.com"}/products/${product.slug}`;
@@ -84,7 +88,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                     {/* Product Name — serif */}
                     <h3 className="font-heading text-[15px] text-[#1a1a1a] leading-snug mb-3">
-                        {product.name}
+                        {displayName}
                     </h3>
 
                     {/* Price Row */}
