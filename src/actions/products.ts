@@ -52,3 +52,21 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
     return data as Product;
 }
+
+export async function searchProducts(query: string, limit: number = 20): Promise<Product[]> {
+    if (!query.trim()) return [];
+
+    const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .or(`name.ilike.%${query}%,category.ilike.%${query}%,description.ilike.%${query}%`)
+        .eq("in_stock", true)
+        .limit(limit);
+
+    if (error) {
+        console.error("Error searching products:", error);
+        return [];
+    }
+
+    return (data as Product[]) || [];
+}

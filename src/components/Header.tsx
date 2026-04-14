@@ -7,12 +7,14 @@ import { useState, useEffect } from "react";
 import { Search, ShoppingBag, Menu, X, User, Phone, ChevronDown, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { COLLECTIONS, OTHER_CATEGORIES } from "@/data/collections";
+import SearchOverlay from "@/components/SearchOverlay";
 
 export default function Header() {
   const { cartCount } = useCart();
   const { t, language, setLanguage } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sareesMenuOpen, setSareesMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -119,7 +121,7 @@ export default function Header() {
               {language === 'en' ? 'TE' : 'EN'}
             </button>
 
-            <button className="hidden md:block text-black hover:text-gray-600 transition-colors">
+            <button onClick={() => setSearchOpen(true)} className="text-black hover:text-gray-600 transition-colors">
               <Search size={20} strokeWidth={1.5} />
             </button>
             <Link href="/cart" className="relative text-black hover:text-gray-600 transition-colors">
@@ -216,6 +218,11 @@ export default function Header() {
             </div>
           </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* Full Screen Search Overlay */}
+      <AnimatePresence>
+        {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
       </AnimatePresence>
     </>
   );
