@@ -38,9 +38,9 @@ export default function Footer() {
                     <div>
                         <h5 className="text-[#B08D57] font-bold uppercase tracking-widest text-xs mb-6">Support</h5>
                         <ul className="space-y-4 text-sm text-gray-400">
-                            <li className="hover:text-[#B08D57] cursor-pointer transition-colors">Shipping Policy</li>
-                            <li className="hover:text-[#B08D57] cursor-pointer transition-colors">Returns & Exchange</li>
-                            <li className="hover:text-[#B08D57] cursor-pointer transition-colors">Terms of Service</li>
+                            <li className="hover:text-[#B08D57] cursor-pointer transition-colors"><Link href="/shipping-policy">Shipping Policy</Link></li>
+                            <li className="hover:text-[#B08D57] cursor-pointer transition-colors"><Link href="/returns">Returns & Exchange</Link></li>
+                            <li className="hover:text-[#B08D57] cursor-pointer transition-colors"><Link href="/terms">Terms of Service</Link></li>
                         </ul>
                     </div>
 
