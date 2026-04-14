@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
 import PremiumPlaceholder from "./PremiumPlaceholder";
@@ -60,21 +59,21 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <Link href={`/products/${product.slug}`} className="block flex-grow">
 
-                {/* Image Container — fixed height so layout never breaks */}
+                {/* Image Container — fixed height, any URL domain works */}
                 <div className="relative h-[280px] overflow-hidden bg-[#F5F0EC]">
                     {hasImage ? (
-                        <Image
+                        // Plain <img> works with ANY domain — no Next.js whitelist needed
+                        <img
                             src={product.images[0]}
                             alt={product.name}
-                            fill
                             loading="lazy"
-                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                             onError={() => setImgError(true)}
                         />
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-[#F5F0EC] text-gray-400 gap-2">
-                            <span className="text-4xl">🥻</span>
-                            <span className="text-xs font-medium tracking-wider uppercase">Image coming soon</span>
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-[#F0EBE3] text-gray-400 gap-2">
+                            <span className="text-5xl">🥻</span>
+                            <span className="text-xs font-medium tracking-widest uppercase text-gray-400">Image Coming Soon</span>
                         </div>
                     )}
                 </div>
