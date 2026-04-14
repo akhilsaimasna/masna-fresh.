@@ -12,15 +12,21 @@ export default function NewProductPage() {
     const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
+        name_te: "",
         price_inr: "",
         price_usd: "",
+        compareAtPrice: "",
         category: "Silk",
+        collection: "",
         description: "",
         images: [] as string[],
+        in_stock: true,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const target = e.target as HTMLInputElement;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        setFormData({ ...formData, [target.name]: value });
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,13 +89,16 @@ export default function NewProductPage() {
 
             const { error } = await supabase.from("products").insert({
                 name: formData.name,
+                name_te: formData.name_te || null,
                 slug: slug,
                 price_inr: parseFloat(formData.price_inr),
                 price_usd: parseFloat(formData.price_usd),
+                compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
                 category: formData.category,
+                collection: formData.collection || null,
                 description: formData.description,
                 images: formData.images,
-                in_stock: true,
+                in_stock: formData.in_stock,
                 featured: false,
                 best_seller: false
             });
@@ -117,27 +126,50 @@ export default function NewProductPage() {
 
                 <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
-                                value={formData.name}
-                                onChange={handleChange}
-                            />
-                        </div>
-
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Price (INR)</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name (English)</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    required
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Telugu Name (Optional)</label>
+                                <input
+                                    type="text"
+                                    name="name_te"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                    value={formData.name_te}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price (INR)</label>
                                 <input
                                     type="number"
                                     name="price_inr"
                                     required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                                     value={formData.price_inr}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Compare At Price (For Discounts)</label>
+                                <input
+                                    type="number"
+                                    name="compareAtPrice"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary placeholder:text-gray-300"
+                                    placeholder="Leave empty if no discount"
+                                    value={formData.compareAtPrice}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -154,22 +186,41 @@ export default function NewProductPage() {
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                            <select
-                                name="category"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
-                                value={formData.category}
-                                onChange={handleChange}
-                            >
-                                <option value="Silk">Silk</option>
-                                <option value="Cotton">Cotton</option>
-                                <option value="Party Wear">Party Wear</option>
-                                <option value="Bridal">Bridal</option>
-                                <option value="Daily Wear">Daily Wear</option>
-                                <option value="Sarees">Sarees</option>
-                                <option value="Lehengas">Lehengas</option>
-                            </select>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <select
+                                    name="category"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                    value={formData.category}
+                                    onChange={handleChange}
+                                >
+                                    <option value="Silk">Silk</option>
+                                    <option value="Cotton">Cotton</option>
+                                    <option value="Party Wear">Party Wear</option>
+                                    <option value="Bridal">Bridal</option>
+                                    <option value="Daily Wear">Daily Wear</option>
+                                    <option value="Sarees">Sarees</option>
+                                    <option value="Lehengas">Lehengas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Collection</label>
+                                <select
+                                    name="collection"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                    value={formData.collection}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">None (General Category only)</option>
+                                    <option value="new-arrivals">New Arrivals / Trending</option>
+                                    <option value="best-sellers">Best Sellers</option>
+                                    <option value="sale">On Sale Offers</option>
+                                    <option value="gadwal-silk">Gadwal Silk</option>
+                                    <option value="banarasi-silk">Banarasi Silk</option>
+                                    <option value="kanchi-silk">Kanchi Silk</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div>
@@ -230,6 +281,20 @@ export default function NewProductPage() {
                                     <span className="text-xs text-gray-400">Select multiple files supported</span>
                                 </label>
                             </div>
+                        </div>
+
+                        <div className="flex items-center mt-4">
+                            <input
+                                id="in_stock"
+                                name="in_stock"
+                                type="checkbox"
+                                checked={formData.in_stock}
+                                onChange={handleChange}
+                                className="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded cursor-pointer"
+                            />
+                            <label htmlFor="in_stock" className="ml-2 block text-sm font-bold text-gray-900 cursor-pointer">
+                                Item is currently in stock
+                            </label>
                         </div>
 
                         <div className="pt-4">

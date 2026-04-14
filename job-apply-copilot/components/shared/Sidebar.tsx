@@ -10,10 +10,12 @@ import {
     Star,
     ClipboardList,
     Settings,
+    Bot,
 } from 'lucide-react';
 
 const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/agent', label: 'AI Agent', icon: Bot },
     { href: '/profile', label: 'Profile', icon: User },
     { href: '/resume', label: 'Resume', icon: FileText },
     { href: '/jobs', label: 'Jobs', icon: Briefcase },
