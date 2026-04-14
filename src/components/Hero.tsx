@@ -1,76 +1,64 @@
-"use client";
-
+/* eslint-disable @next/next/no-img-element */
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
-    // Encoded WhatsApp Message
-    const whatsappMessage = encodeURIComponent(
-        "హాయ్ Shyamala Sarees 😊\n" +
-        "నాకు శారీ కావాలి.\n" +
-        "👉 బడ్జెట్: ₹____\n" +
-        "👉 సందర్భం: పెళ్లి / ఫంక్షన్ / రోజువారీ\n" +
-        "👉 కలర్: ____\n" +
-        "👉 డెలివరీ ప్రాంతం: ____\n" +
-        "మీ దగ్గర ఉన్న best collection పంపండి 🙏"
-    );
-
     return (
-        <section className="relative w-full h-[60vh] md:h-[85vh] bg-gray-900 overflow-hidden">
+        <section className="relative w-full h-[70vh] md:h-[90vh] bg-black overflow-hidden flex items-center justify-center">
 
             {/* Background Image */}
             <div className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url('/brand/hero-bg-custom.jpg')` }}
-            >
-            </div>
+            ></div>
 
-            {/* Dark Overlay Gradient */}
-            <div className="absolute inset-0 bg-black/40"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 opacity-90"></div>
+            {/* Enhanced Dark Gradient Overlay (Bottom to Center) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
 
             {/* Content Center */}
-            <div className="relative z-10 h-full flex items-center justify-center text-center px-4">
+            <div className="relative z-10 w-full px-4 text-center mt-20">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
                     className="max-w-4xl mx-auto flex flex-col items-center"
                 >
-                    {/* Eyebrow Label */}
-                    <span className="text-[#F2D06B] font-sans text-xs md:text-sm font-bold uppercase tracking-[4px] mb-6 drop-shadow-md">
-                        Shyamala Sarees • Kalwakurthy
-                    </span>
-
                     {/* Main Headings */}
-                    <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight drop-shadow-2xl mb-6">
-                        WhatsApp లో <br className="md:hidden" /> శారీ ఎంపిక
-                    </h1>
+                    <div className="mb-8">
+                        <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-medium text-white leading-tight drop-shadow-xl">
+                            Handpicked Silks,
+                        </h1>
+                        <h2 className="font-sans text-3xl md:text-5xl lg:text-6xl font-light text-white/90 leading-tight mt-2 drop-shadow-lg">
+                            Straight from the Loom
+                        </h2>
+                    </div>
+
+                    {/* Gold Divider Line */}
+                    <div className="w-24 md:w-32 h-[1px] bg-[#B08D57] mb-8"></div>
 
                     {/* Sub Text */}
-                    <p className="font-sans text-gray-100 text-base md:text-xl font-light tracking-wide max-w-2xl mb-10 drop-shadow-md opacity-95 leading-relaxed">
-                        మీ బడ్జెట్ & సందర్భం చెప్పండి — <br />
-                        మీకు సరిపోయే best కలెక్షన్ వెంటనే పంపిస్తాం.
+                    <p className="font-sans text-white/80 text-sm md:text-base font-light tracking-[0.2em] uppercase mb-12 drop-shadow-md">
+                        Kanjivaram • Gadwal • Banarasi • Delivered via WhatsApp
                     </p>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-col md:flex-row items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
                         {/* Primary: WhatsApp */}
                         <a
-                            href={`https://wa.me/919440653443?text=${whatsappMessage}`}
+                            href="https://wa.me/919440653443"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-[#B08D57] text-white px-8 py-4 text-sm font-bold uppercase tracking-widest rounded-sm shadow-xl hover:bg-[#967645] hover:scale-105 transition-all duration-300 flex items-center gap-2 min-w-[280px] justify-center"
+                            className="bg-[#B08D57] border border-[#B08D57] text-white px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-sm shadow-xl hover:bg-[#967645] hover:border-[#967645] transition-colors duration-300 w-full sm:w-auto text-center"
                         >
-                            WhatsApp లో ఆర్డర్ చేయండి
+                            WhatsApp Order
                         </a>
 
-                        {/* Secondary: View Collection */}
+                        {/* Secondary: Browse Collections */}
                         <Link
                             href="/collections"
-                            className="border border-white/40 text-white px-8 py-4 text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 min-w-[280px] justify-center"
+                            className="bg-transparent border border-white text-white px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-white hover:text-black transition-colors duration-300 w-full sm:w-auto text-center flex items-center justify-center gap-2"
                         >
-                            కలెక్షన్ చూడండి <ArrowRight size={16} />
+                            Browse Collections <ArrowRight size={14} />
                         </Link>
                     </div>
 
