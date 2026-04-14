@@ -8,7 +8,6 @@ export default function Footer() {
                     {/* Brand Info */}
                     <div>
                         <h4 className="font-heading text-2xl font-bold mb-6 text-white">Shyamala Sarees</h4>
-                        <h4 className="font-heading text-2xl font-bold mb-6 text-white">Shyamala Sarees</h4>
                         <p className="text-gray-400 text-sm leading-relaxed mb-6 font-light">
                             మా ఇంటి నుంచే మీ ఇంటికి. <br />
                             సంప్రదాయం మరియు నమ్మకం మా ప్రత్యేకత.
