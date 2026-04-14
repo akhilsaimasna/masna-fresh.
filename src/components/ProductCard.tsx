@@ -51,9 +51,16 @@ export default function ProductCard({ product }: ProductCardProps) {
             </button>
 
             {/* Discount Badge */}
-            {discount !== null && (
+            {discount !== null && product.in_stock && (
                 <div className="absolute top-3 left-3 z-20 bg-[#800000] text-white text-[10px] font-bold px-2 py-1 rounded-sm tracking-wider">
                     {discount}% OFF
+                </div>
+            )}
+
+            {/* Sold Out Badge */}
+            {!product.in_stock && (
+                <div className="absolute top-3 left-3 z-30 bg-black/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-sm tracking-widest uppercase">
+                    Sold Out
                 </div>
             )}
 
@@ -111,37 +118,51 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             {/* Action Buttons — Desktop hover overlay */}
             <div className="hidden md:flex flex-col gap-2 px-4 pb-4 pt-0 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                <AddToCartButton product={product} compact={true} />
-                <a
-                    href={`https://wa.me/919440653443?text=${whatsappMessage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        import("@/lib/orders").then(mod => mod.saveOrder(product));
-                    }}
-                    className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-all duration-200"
-                >
-                    <MessageCircle size={13} />
-                    WhatsApp Order
-                </a>
+                {product.in_stock ? (
+                    <>
+                        <AddToCartButton product={product} compact={true} />
+                        <a
+                            href={`https://wa.me/919440653443?text=${whatsappMessage}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                import("@/lib/orders").then(mod => mod.saveOrder(product));
+                            }}
+                            className="flex items-center justify-center gap-2 w-full py-2 border border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-all duration-200"
+                        >
+                            <MessageCircle size={13} />
+                            WhatsApp Order
+                        </a>
+                    </>
+                ) : (
+                    <button disabled className="w-full py-2 bg-gray-100 text-gray-400 text-xs font-bold uppercase tracking-widest rounded-sm cursor-not-allowed border border-gray-200">
+                        Currently Unavailable
+                    </button>
+                )}
             </div>
 
             {/* Mobile WhatsApp Button */}
             <div className="md:hidden px-4 pb-4 pt-0">
-                <a
-                    href={`https://wa.me/919440653443?text=${whatsappMessage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        import("@/lib/orders").then(mod => mod.saveOrder(product));
-                    }}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] text-xs font-bold uppercase tracking-wider rounded-sm"
-                >
-                    <MessageCircle size={13} />
-                    WhatsApp లో ఆర్డర్ చేయండి
-                </a>
+                {product.in_stock ? (
+                    <a
+                        href={`https://wa.me/919440653443?text=${whatsappMessage}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            import("@/lib/orders").then(mod => mod.saveOrder(product));
+                        }}
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] text-xs font-bold uppercase tracking-wider rounded-sm"
+                    >
+                        <MessageCircle size={13} />
+                        WhatsApp లో ఆర్డర్ చేయండి
+                    </a>
+                ) : (
+                    <button disabled className="w-full py-2.5 bg-gray-100 text-gray-400 border border-gray-200 text-xs font-bold uppercase tracking-wider rounded-sm cursor-not-allowed">
+                        అందుబాటులో లేదు
+                    </button>
+                )}
             </div>
         </div>
     );

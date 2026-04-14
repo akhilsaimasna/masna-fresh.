@@ -119,9 +119,16 @@ export default function ProductView({ product }: { product: Product }) {
 
                         {/* Actions */}
                         <div className="flex flex-col gap-4 mb-10">
-                            <AddToCartButton product={product} />
-
-                            <WhatsAppButton product={product} />
+                            {product.in_stock ? (
+                                <>
+                                    <AddToCartButton product={product} />
+                                    <WhatsAppButton product={product} />
+                                </>
+                            ) : (
+                                <button disabled className="w-full py-4 bg-gray-100 text-gray-400 text-sm font-bold uppercase tracking-widest cursor-not-allowed border border-gray-200 text-center">
+                                    Currently Unavailable
+                                </button>
+                            )}
                         </div>
 
                         {/* Trust Badges Simple */}

@@ -5,7 +5,6 @@ export async function getProducts(category?: string, collectionSlug?: string, li
     let query = supabase
         .from("products")
         .select("*")
-        .eq("in_stock", true)
         .order("created_at", { ascending: false })
         .limit(limit);
 
@@ -74,7 +73,6 @@ export async function searchProducts(query: string, limit: number = 20): Promise
         .from("products")
         .select("*")
         .or(`name.ilike.%${query}%,category.ilike.%${query}%,description.ilike.%${query}%`)
-        .eq("in_stock", true)
         .limit(limit);
 
     if (error) {

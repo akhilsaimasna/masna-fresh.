@@ -164,7 +164,7 @@ function ConfirmModal({
                     className="flex items-start gap-2 p-3 rounded-xl mb-5"
                     style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)' }}
                 >
-                    <AlertTriangle size={14} style={{ color: 'var(--color-warning-500)', shrink: 0, marginTop: 1 }} />
+                    <AlertTriangle size={14} className="shrink-0 mt-0.5" style={{ color: 'var(--color-warning-500)' }} />
                     <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
                         The agent will open the application link. You control the final submit — this keeps you safe from being flagged by job boards.
                     </p>

@@ -13,6 +13,7 @@ function encode(data: object) {
 }
 
 export async function GET(request: Request) {
+    // ── Auth & clients must be created BEFORE the stream ──
     const supabase = await createClient();
     const {
         data: { user },
@@ -22,9 +23,13 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const serviceClient = await createServiceClient();
+
     const { searchParams } = new URL(request.url);
     const keywordsParam = searchParams.get('keywords');
-    const keywords = keywordsParam ? keywordsParam.split(',').map((k) => k.trim()).filter(Boolean) : [];
+    const keywords = keywordsParam
+        ? keywordsParam.split(',').map((k) => k.trim()).filter(Boolean)
+        : [];
 
     const stream = new ReadableStream({
         async start(controller) {
@@ -49,12 +54,18 @@ export async function GET(request: Request) {
                     .single();
 
                 if (!analysis) {
-                    send({ type: 'error', message: 'No resume found. Please upload and analyze a resume first.' });
+                    send({
+                        type: 'error',
+                        message: 'No resume found. Please upload and analyze a resume first.',
+                    });
                     controller.close();
                     return;
                 }
 
-                send({ type: 'step', message: `Resume loaded — ${analysis.skills?.length || 0} skills, ${analysis.years_experience || '?'} yrs experience` });
+                send({
+                    type: 'step',
+                    message: `Resume loaded — ${analysis.skills?.length || 0} skills, ${analysis.years_experience || '?'} yrs experience`,
+                });
 
                 // Step 2: Resolve keywords
                 let searchKeywords = keywords;
@@ -64,7 +75,10 @@ export async function GET(request: Request) {
                         .select('target_roles')
                         .eq('id', user.id)
                         .single();
-                    searchKeywords = profile?.target_roles || analysis.roles_held?.slice(0, 3) || [];
+                    searchKeywords =
+                        profile?.target_roles?.length
+                            ? profile.target_roles
+                            : analysis.roles_held?.slice(0, 3) || [];
                 }
 
                 send({ type: 'step', message: `Searching for: ${searchKeywords.join(', ')}` });
@@ -79,7 +93,12 @@ export async function GET(request: Request) {
                     fetchAshbyJobs(undefined, searchKeywords).catch(() => []),
                 ]);
 
-                const allNewJobs = [...greenhouseJobs, ...leverJobs, ...arbeitnowJobs, ...ashbyJobs];
+                const allNewJobs = [
+                    ...greenhouseJobs,
+                    ...leverJobs,
+                    ...arbeitnowJobs,
+                    ...ashbyJobs,
+                ];
 
                 send({
                     type: 'step',
@@ -87,26 +106,29 @@ export async function GET(request: Request) {
                 });
 
                 // Step 4: Deduplicate & store new jobs
-                const serviceClient = await createServiceClient();
-                const { data: existingJobs } = await serviceClient.from('jobs').select('url_hash');
-                const existingHashes = new Set((existingJobs || []).map((j: { url_hash: string }) => j.url_hash));
+                const { data: existingJobs } = await serviceClient
+                    .from('jobs')
+                    .select('url_hash');
+                const existingHashes = new Set(
+                    (existingJobs || []).map((j: { url_hash: string }) => j.url_hash)
+                );
                 const uniqueJobs = deduplicateJobs(
                     allNewJobs as Omit<Job, 'id' | 'created_at'>[],
                     existingHashes
                 );
 
-                let insertedJobs: Job[] = [];
+                let insertedCount = 0;
                 if (uniqueJobs.length > 0) {
                     const { data: inserted } = await serviceClient
                         .from('jobs')
                         .insert(uniqueJobs)
                         .select();
-                    insertedJobs = inserted || [];
+                    insertedCount = inserted?.length || 0;
                 }
 
-                send({ type: 'step', message: `Saved ${insertedJobs.length} new jobs to database` });
+                send({ type: 'step', message: `Saved ${insertedCount} new jobs to database` });
 
-                // Step 5: Get jobs to score (newly inserted + recent existing)
+                // Step 5: Get jobs to score
                 const { data: jobsToScore } = await supabase
                     .from('jobs')
                     .select('*')
@@ -126,10 +148,33 @@ export async function GET(request: Request) {
                     .eq('user_id', user.id)
                     .eq('resume_id', analysis.resume_id);
 
-                const alreadyMatchedIds = new Set((existingMatches || []).map((m: { job_id: string }) => m.job_id));
-                const unscored = jobsToScore.filter((j: Job) => !alreadyMatchedIds.has(j.id));
+                const alreadyMatchedIds = new Set(
+                    (existingMatches || []).map((m: { job_id: string }) => m.job_id)
+                );
+                const unscored = (jobsToScore as Job[]).filter(
+                    (j) => !alreadyMatchedIds.has(j.id)
+                );
 
-                send({ type: 'step', message: `Scoring ${unscored.length} jobs against your resume...` });
+                // Stream previously matched jobs first so user sees something immediately
+                if (existingMatches && existingMatches.length > 0) {
+                    const { data: previousMatches } = await supabase
+                        .from('job_matches')
+                        .select('*, job:jobs(*)')
+                        .eq('user_id', user.id)
+                        .order('match_score', { ascending: false })
+                        .limit(20);
+
+                    for (const m of previousMatches || []) {
+                        if (m.job) {
+                            send({ type: 'job', job: m.job, match: m });
+                        }
+                    }
+                }
+
+                send({
+                    type: 'step',
+                    message: `Scoring ${unscored.length} new jobs against your resume...`,
+                });
 
                 const resumeJson = JSON.stringify({
                     skills: analysis.skills,
@@ -140,11 +185,14 @@ export async function GET(request: Request) {
                     education: analysis.education,
                 });
 
-                // Step 6: Score each job and stream results
+                // Step 6: Score each new job and stream result immediately
                 for (const job of unscored) {
                     try {
                         const jobAnalysis = await parseJobDescription(job.description || '');
-                        const match = await computeMatchScore(resumeJson, JSON.stringify(jobAnalysis));
+                        const match = await computeMatchScore(
+                            resumeJson,
+                            JSON.stringify(jobAnalysis)
+                        );
 
                         const { data: matchRecord } = await supabase
                             .from('job_matches')
@@ -164,37 +212,19 @@ export async function GET(request: Request) {
                             .single();
 
                         if (matchRecord) {
-                            send({
-                                type: 'job',
-                                job,
-                                match: matchRecord,
-                            });
+                            send({ type: 'job', job, match: matchRecord });
                         }
                     } catch {
-                        // skip failed job
                         continue;
                     }
                 }
 
-                // Also stream already-matched jobs so user sees everything
-                if (existingMatches && existingMatches.length > 0) {
-                    const { data: previousMatches } = await supabase
-                        .from('job_matches')
-                        .select('*, job:jobs(*)')
-                        .eq('user_id', user.id)
-                        .order('match_score', { ascending: false })
-                        .limit(20);
-
-                    for (const m of previousMatches || []) {
-                        if (m.job) {
-                            send({ type: 'job', job: m.job, match: m });
-                        }
-                    }
-                }
-
-                send({ type: 'done', message: 'Agent finished. Review matches below.' });
+                send({ type: 'done', message: 'Agent finished. Review your matches and apply.' });
             } catch (err) {
-                send({ type: 'error', message: err instanceof Error ? err.message : 'Agent failed' });
+                send({
+                    type: 'error',
+                    message: err instanceof Error ? err.message : 'Agent encountered an error',
+                });
             } finally {
                 controller.close();
             }
