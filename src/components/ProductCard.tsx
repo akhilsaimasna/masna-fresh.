@@ -4,15 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
 import PremiumPlaceholder from "./PremiumPlaceholder";
-import { Heart, MessageCircle, ShoppingBag } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
+import { useState } from "react";
 
 interface ProductCardProps {
     product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-    const hasImage = product.images && product.images.length > 0 && product.images[0].startsWith("http");
+    const [imgError, setImgError] = useState(false);
+    const hasImage = !imgError && product.images && product.images.length > 0 && product.images[0].startsWith("http");
 
     const productUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shyamalasarees.com"}/products/${product.slug}`;
 
@@ -54,22 +56,22 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <Link href={`/products/${product.slug}`} className="block flex-grow">
 
-                {/* Image Container with zoom on hover */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0EC]">
+                {/* Image Container — fixed height so layout never breaks */}
+                <div className="relative h-[280px] overflow-hidden bg-[#F5F0EC]">
                     {hasImage ? (
                         <Image
                             src={product.images[0]}
                             alt={product.name}
                             fill
+                            loading="lazy"
                             className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                            onError={() => setImgError(true)}
                         />
                     ) : (
-                        <PremiumPlaceholder
-                            ratio="portrait"
-                            variant="maroon"
-                            text={product.category || "New"}
-                            className="w-full h-full transition-transform duration-700 group-hover:scale-110"
-                        />
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-[#F5F0EC] text-gray-400 gap-2">
+                            <span className="text-4xl">🥻</span>
+                            <span className="text-xs font-medium tracking-wider uppercase">Image coming soon</span>
+                        </div>
                     )}
                 </div>
 
@@ -81,19 +83,24 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </p>
 
                     {/* Product Name — serif */}
-                    <h3 className="font-heading text-[15px] text-[#1a1a1a] leading-snug mb-3 line-clamp-2">
+                    <h3 className="font-heading text-[15px] text-[#1a1a1a] leading-snug mb-3">
                         {product.name}
                     </h3>
 
                     {/* Price Row */}
-                    <div className="flex items-baseline gap-2 mb-1">
+                    <div className="flex items-baseline gap-2 flex-wrap mb-1">
                         <span className="text-lg font-bold text-[#1a1a1a]">
                             ₹{product.price_inr.toLocaleString()}
                         </span>
                         {discount !== null && compareAtPrice && (
-                            <span className="text-xs text-gray-400 line-through">
-                                ₹{(compareAtPrice as number).toLocaleString()}
-                            </span>
+                            <>
+                                <span className="text-xs text-gray-400 line-through">
+                                    ₹{(compareAtPrice as number).toLocaleString()}
+                                </span>
+                                <span className="text-xs font-bold text-red-600">
+                                    {discount}% off
+                                </span>
+                            </>
                         )}
                     </div>
                 </div>
