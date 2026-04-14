@@ -326,7 +326,7 @@ export default function AgentPage() {
     const [confirmJob, setConfirmJob] = useState<ConfirmJob | null>(null);
     const [applying, setApplying] = useState(false);
     const [keywords, setKeywords] = useState('');
-    const eventSourceRef = useRef<EventSource | null>(null);
+    const abortRef = useRef<AbortController | null>(null);
     const stepIdRef = useRef(0);
     const logRef = useRef<HTMLDivElement>(null);
 
@@ -340,10 +340,10 @@ export default function AgentPage() {
         }, 50);
     }, []);
 
-    const startAgent = useCallback(() => {
-        if (eventSourceRef.current) {
-            eventSourceRef.current.close();
-        }
+    const startAgent = useCallback(async () => {
+        abortRef.current?.abort();
+        const abort = new AbortController();
+        abortRef.current = abort;
 
         setRunning(true);
         setDone(false);
@@ -351,57 +351,70 @@ export default function AgentPage() {
         setJobs([]);
 
         const params = new URLSearchParams();
-        if (keywords.trim()) {
-            params.set('keywords', keywords);
-        }
-
+        if (keywords.trim()) params.set('keywords', keywords);
         const url = `/api/agent/run${params.toString() ? `?${params}` : ''}`;
-        const es = new EventSource(url);
-        eventSourceRef.current = es;
 
-        es.onmessage = (e) => {
-            const data = JSON.parse(e.data);
+        try {
+            const res = await fetch(url, { signal: abort.signal });
 
-            if (data.type === 'step') {
-                addStep(data.message);
-            } else if (data.type === 'error') {
-                addStep(data.message, 'error');
+            if (!res.ok) {
+                const text = await res.text();
+                addStep(`Server error ${res.status}: ${text.slice(0, 300)}`, 'error');
                 setRunning(false);
-                es.close();
-            } else if (data.type === 'job') {
-                setJobs((prev) => {
-                    // avoid duplicates
-                    if (prev.some((j) => j.job.id === data.job.id)) return prev;
-                    return [{ job: data.job, match: data.match, status: 'pending' }, ...prev];
-                });
-            } else if (data.type === 'done') {
-                addStep(data.message);
-                setRunning(false);
-                setDone(true);
-                es.close();
+                return;
             }
-        };
 
-        es.onerror = async () => {
-            // Try to get the actual error from the server
-            try {
-                const res = await fetch(url);
-                if (!res.ok) {
-                    const text = await res.text();
-                    addStep(`Server error ${res.status}: ${text.slice(0, 200)}`, 'error');
-                } else {
-                    addStep('Connection lost unexpectedly.', 'error');
+            if (!res.body) {
+                addStep('No response body from server.', 'error');
+                setRunning(false);
+                return;
+            }
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() ?? '';
+
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    try {
+                        const data = JSON.parse(line.slice(6));
+                        if (data.type === 'step') {
+                            addStep(data.message);
+                        } else if (data.type === 'error') {
+                            addStep(data.message, 'error');
+                        } else if (data.type === 'job') {
+                            setJobs((prev) => {
+                                if (prev.some((j) => j.job.id === data.job.id)) return prev;
+                                return [{ job: data.job, match: data.match, status: 'pending' }, ...prev];
+                            });
+                        } else if (data.type === 'done') {
+                            addStep(data.message);
+                            setDone(true);
+                        }
+                    } catch {
+                        // malformed JSON line, skip
+                    }
                 }
-            } catch {
-                addStep('Connection lost. Agent stopped.', 'error');
             }
+        } catch (err) {
+            if ((err as Error).name !== 'AbortError') {
+                addStep(`Error: ${err instanceof Error ? err.message : String(err)}`, 'error');
+            }
+        } finally {
             setRunning(false);
-            es.close();
-        };
+        }
     }, [keywords, addStep]);
 
     const stopAgent = useCallback(() => {
-        eventSourceRef.current?.close();
+        abortRef.current?.abort();
         addStep('Agent stopped by user.');
         setRunning(false);
     }, [addStep]);
