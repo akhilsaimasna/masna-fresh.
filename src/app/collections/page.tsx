@@ -27,9 +27,9 @@ export default function CollectionsPage() {
                     {COLLECTIONS.map((col, index) => (
                         <Link href={`/collections/${col.slug}`} key={col.slug} className="group block relative overflow-hidden h-[300px] border border-gray-100 bg-gray-50 hover:shadow-xl transition-all duration-500">
 
-                            {/* Mockup Image Background (Using patterns/gradients for now) */}
+                            {/* Collection Image Background */}
                             <div className="absolute inset-0 bg-gray-100 group-hover:scale-105 transition-transform duration-700">
-                                {/* Placeholder for collection image */}
+                                <img src={col.image} alt={col.name} className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             </div>
 
