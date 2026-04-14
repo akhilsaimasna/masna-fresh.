@@ -18,7 +18,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const savedLang = localStorage.getItem('app-language') as Language;
         if (savedLang) {
+            // Respect previously saved preference
             setLanguageState(savedLang);
+        } else {
+            // Auto-detect from browser language
+            const browserLang = navigator.language || (navigator as any).userLanguage || '';
+            if (browserLang.startsWith('te')) {
+                // Browser is set to Telugu (te or te-IN)
+                setLanguageState('te');
+            }
+            // Default stays 'en' for all other languages
         }
         setMounted(true);
     }, []);
