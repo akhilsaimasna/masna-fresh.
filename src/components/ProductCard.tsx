@@ -29,9 +29,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         `Please confirm availability and delivery details. 🙏`
     );
 
-    // Calculate random discount for demo if not present
-    const discount = Math.floor(Math.random() * (60 - 30 + 1) + 30);
-    const originalPrice = Math.floor(product.price_inr * (100 / (100 - discount)));
+    // Calculate real discount only if compareAtPrice exists and is higher than sale price
+    const compareAtPrice = (product as any).compareAtPrice;
+    const discount = compareAtPrice && compareAtPrice > product.price_inr
+        ? Math.round(((compareAtPrice - product.price_inr) / compareAtPrice) * 100)
+        : null;
 
     return (
         <div className="group block relative bg-white hover:shadow-card transition-shadow duration-300 pb-2">
@@ -94,8 +96,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </p>
                     <div className="flex items-center gap-2 text-sm">
                         <span className="font-bold text-[#282C3F]">₹{product.price_inr.toLocaleString()}</span>
-                        <span className="text-xs text-[#94969F] line-through">₹{originalPrice.toLocaleString()}</span>
-                        <span className="text-xs text-[#FF905A] font-bold">({discount}% OFF)</span>
+                        {discount !== null && compareAtPrice && (
+                            <>
+                                <span className="text-xs text-[#94969F] line-through">₹{(compareAtPrice as number).toLocaleString()}</span>
+                                <span className="text-xs text-[#FF905A] font-bold">({discount}% OFF)</span>
+                            </>
+                        )}
                     </div>
                 </div>
             </Link>
