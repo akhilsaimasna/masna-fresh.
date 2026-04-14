@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { Product } from "@/types";
 
-export async function getProducts(category?: string, limit: number = 20): Promise<Product[]> {
+export async function getProducts(category?: string, collectionSlug?: string, limit: number = 50): Promise<Product[]> {
     let query = supabase
         .from("products")
         .select("*")
@@ -11,6 +11,20 @@ export async function getProducts(category?: string, limit: number = 20): Promis
 
     if (category) {
         query = query.eq("category", category);
+    }
+    
+    if (collectionSlug) {
+        if (collectionSlug === 'new-arrivals') {
+            // Already sorted by recently created, no strict db filter needed
+        } else if (collectionSlug === 'best-sellers') {
+            query = query.eq("best_seller", true);
+        } else if (collectionSlug === 'sale') {
+            // Check for discount presence
+            query = query.not("compareAtPrice", "is", null);
+        } else {
+            // Actual collection matching
+            query = query.eq("collection", collectionSlug);
+        }
     }
 
     const { data, error } = await query;

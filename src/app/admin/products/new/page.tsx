@@ -202,6 +202,7 @@ export default function NewProductPage() {
                                     <option value="Daily Wear">Daily Wear</option>
                                     <option value="Sarees">Sarees</option>
                                     <option value="Lehengas">Lehengas</option>
+                                    <option value="Jewellery">Jewellery</option>
                                 </select>
                             </div>
                             <div>
@@ -219,6 +220,8 @@ export default function NewProductPage() {
                                     <option value="gadwal-silk">Gadwal Silk</option>
                                     <option value="banarasi-silk">Banarasi Silk</option>
                                     <option value="kanchi-silk">Kanchi Silk</option>
+                                    <option value="lehengas">Lehengas</option>
+                                    <option value="jewellery">Jewellery</option>
                                 </select>
                             </div>
                         </div>

@@ -13,17 +13,20 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
     const collectionTelugu = collectionInfo?.telugu || "";
 
     // 2. Fetch products from Supabase
-    // Ideally we filter by category/collection in the DB.
-    // For this demo, we'll try to match the 'category' field in DB with the collection name,
-    // or just fetch latest items if it's "new-arrivals".
+    // We now have a collection field in the database.
+    // If it's a root category like "Jewellery" or "Lehengas", we search by Category.
+    // Otherwise, we search by Collection Slug (e.g., 'gadwal-silk', 'sale').
 
     let dbCategory: string | undefined = undefined;
+    let dbCollection: string | undefined = slug;
 
-    // Simple mapping for demo purposes
-    if (slug === 'kanchi-silk' || slug === 'gadwal-silk') dbCategory = 'Silk';
-    if (slug === 'new-arrivals') dbCategory = undefined;
+    // Root categories that map directly to Category in DB
+    if (slug === 'jewellery' || slug === 'lehengas') {
+        dbCategory = slug === 'jewellery' ? 'Jewellery' : 'Lehengas';
+        dbCollection = undefined; // Don't filter by collection if it's a root category
+    }
 
-    const products = await getProducts(dbCategory, 50);
+    const products = await getProducts(dbCategory, dbCollection, 50);
 
     // In valid app, we might filter further in JS if DB category isn't granular enough yet
     const filteredProducts = products;
