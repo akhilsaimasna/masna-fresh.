@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 
 export default async function Home() {
   // Fetch real data from Supabase
-  const newArrivals = await getProducts(undefined, 4);
+  const newArrivals = await getProducts(undefined, 'new-arrivals', 4);
   const bestSellers = await getBestSellers(4);
 
   return (

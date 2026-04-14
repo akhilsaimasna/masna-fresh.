@@ -382,8 +382,19 @@ export default function AgentPage() {
             }
         };
 
-        es.onerror = () => {
-            addStep('Connection lost. Agent stopped.', 'error');
+        es.onerror = async () => {
+            // Try to get the actual error from the server
+            try {
+                const res = await fetch(url);
+                if (!res.ok) {
+                    const text = await res.text();
+                    addStep(`Server error ${res.status}: ${text.slice(0, 200)}`, 'error');
+                } else {
+                    addStep('Connection lost unexpectedly.', 'error');
+                }
+            } catch {
+                addStep('Connection lost. Agent stopped.', 'error');
+            }
             setRunning(false);
             es.close();
         };

@@ -12,18 +12,29 @@ function encode(data: object) {
     return `data: ${JSON.stringify(data)}\n\n`;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     // ── Auth & clients must be created BEFORE the stream ──
-    const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+    let supabase: Awaited<ReturnType<typeof createClient>>;
+    let serviceClient: Awaited<ReturnType<typeof createServiceClient>>;
+    let user: { id: string } | null = null;
 
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    try {
+        supabase = await createClient();
+        const { data } = await supabase.auth.getUser();
+        user = data.user;
+        serviceClient = await createServiceClient();
+    } catch (err) {
+        return NextResponse.json(
+            { error: `Setup failed: ${err instanceof Error ? err.message : String(err)}` },
+            { status: 500 }
+        );
     }
 
-    const serviceClient = await createServiceClient();
+    if (!user) {
+        return NextResponse.json({ error: 'Unauthorized — please log in' }, { status: 401 });
+    }
 
     const { searchParams } = new URL(request.url);
     const keywordsParam = searchParams.get('keywords');
