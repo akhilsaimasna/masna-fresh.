@@ -107,9 +107,10 @@ export default function NewProductPage() {
 
             alert("Product added successfully!");
             router.push("/admin/dashboard");
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Error adding product:", error);
-            alert("Error adding product. Please check console.");
+            const msg = error instanceof Error ? error.message : (error as { message?: string })?.message || JSON.stringify(error);
+            alert(`Error saving product:\n\n${msg}`);
         } finally {
             setLoading(false);
         }
