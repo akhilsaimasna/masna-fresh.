@@ -87,21 +87,27 @@ export default function NewProductPage() {
         try {
             const slug = generateSlug(formData.name);
 
-            const { error } = await supabase.from("products").insert({
+            // Build payload — only include optional columns if they have values
+            // This prevents crashes if the DB columns don't exist yet
+            const payload: Record<string, unknown> = {
                 name: formData.name,
-                name_te: formData.name_te || null,
                 slug: slug,
                 price_inr: parseFloat(formData.price_inr),
                 price_usd: parseFloat(formData.price_usd),
-                compare_at_price: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
                 category: formData.category,
-                collection: formData.collection || null,
                 description: formData.description,
                 images: formData.images,
                 in_stock: formData.in_stock,
                 featured: false,
-                best_seller: false
-            });
+                best_seller: false,
+            };
+
+            // Optional columns — only add if they have values
+            if (formData.name_te) payload.name_te = formData.name_te;
+            if (formData.collection) payload.collection = formData.collection;
+            if (formData.compareAtPrice) payload.compare_at_price = parseFloat(formData.compareAtPrice);
+
+            const { error } = await supabase.from("products").insert(payload);
 
             if (error) throw error;
 
