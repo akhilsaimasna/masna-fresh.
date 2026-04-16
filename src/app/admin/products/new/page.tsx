@@ -93,7 +93,7 @@ export default function NewProductPage() {
                 slug: slug,
                 price_inr: parseFloat(formData.price_inr),
                 price_usd: parseFloat(formData.price_usd),
-                compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
+                compare_at_price: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
                 category: formData.category,
                 collection: formData.collection || null,
                 description: formData.description,

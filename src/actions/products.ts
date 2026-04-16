@@ -19,7 +19,7 @@ export async function getProducts(category?: string, collectionSlug?: string, li
             query = query.eq("best_seller", true);
         } else if (collectionSlug === 'sale') {
             // Check for discount presence
-            query = query.not("compareAtPrice", "is", null);
+            query = query.not("compare_at_price", "is", null);
         } else {
             // Actual collection matching
             query = query.eq("collection", collectionSlug);

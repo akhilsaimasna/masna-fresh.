@@ -33,8 +33,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         `Please confirm availability and delivery details. 🙏`
     );
 
-    // Real discount from compareAtPrice only
-    const compareAtPrice = (product as any).compareAtPrice;
+    // Real discount from compare_at_price only
+    const compareAtPrice = (product as any).compare_at_price;
     const discount = compareAtPrice && compareAtPrice > product.price_inr
         ? Math.round(((compareAtPrice - product.price_inr) / compareAtPrice) * 100)
         : null;
