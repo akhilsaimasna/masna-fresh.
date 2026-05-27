@@ -5,6 +5,15 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LogIn, Mail, Lock, Loader2 } from 'lucide-react';
+import GoogleOAuthButton from '@/components/shared/GoogleOAuthButton';
+
+/**
+ * To enable Google OAuth:
+ * 1. Follow the setup guide in supabase/SETUP.md
+ * 2. Set NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true in .env.local
+ */
+const GOOGLE_OAUTH_ENABLED =
+    process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === 'true';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -40,10 +49,24 @@ export default function LoginPage() {
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-500 mb-4">
                     <span className="text-2xl">🦾</span>
                 </div>
-                <h1 className="text-2xl font-bold gradient-text">OpenClaw</h1>
+                <h1 className="text-2xl font-bold gradient-text">Job Copilot</h1>
                 <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                    Job Apply Copilot
+                    Sign in to your account
                 </p>
+            </div>
+
+            {/* Google OAuth */}
+            <div className="mb-5">
+                <GoogleOAuthButton configured={GOOGLE_OAUTH_ENABLED} />
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 mb-5">
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
+                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    or continue with email
+                </span>
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">

@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'OpenClaw — Job Apply Copilot',
+  title: 'Job Copilot — AI-Powered Job Search',
   description:
-    'Discover relevant jobs, understand your match quality, generate polished application materials, and track your progress.',
+    'Discover relevant jobs, understand your match quality, generate polished application materials, and track your progress — all with human oversight.',
 };
 
 export default function RootLayout({

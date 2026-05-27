@@ -10,6 +10,7 @@ export interface Product {
     subCategory?: string;
     description: string;
     images: string[];
+    videos?: string[];       // Video URLs (optional)
     in_stock: boolean;
     featured: boolean;
     best_seller: boolean;

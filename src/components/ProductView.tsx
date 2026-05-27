@@ -30,9 +30,11 @@ function AccordionItem({ title, children }: { title: string; children: React.Rea
 
 export default function ProductView({ product }: { product: Product }) {
     const [selectedImage, setSelectedImage] = useState(product.images?.[0] || "");
+    const [showVideo, setShowVideo] = useState(false);
 
     const hasImage = selectedImage && selectedImage.startsWith("http");
     const hasMultipleImages = product.images && product.images.length > 1;
+    const hasVideo = product.videos && product.videos.length > 0;
 
     return (
         <div className="min-h-screen bg-[#FDFBF7] py-12 md:py-20">
@@ -74,10 +76,10 @@ export default function ProductView({ product }: { product: Product }) {
                                 {product.images.map((img, idx) => (
                                     <button
                                         key={idx}
-                                        onClick={() => setSelectedImage(img)}
+                                        onClick={() => { setSelectedImage(img); setShowVideo(false); }}
                                         className={cn(
                                             "relative aspect-[3/4] bg-[#f4f1ea] overflow-hidden rounded-sm border cursor-pointer transition-all",
-                                            selectedImage === img
+                                            selectedImage === img && !showVideo
                                                 ? "border-[#800000] ring-1 ring-[#800000]"
                                                 : "border-[#E5E0D8] hover:border-[#800000]/50"
                                         )}
@@ -90,7 +92,43 @@ export default function ProductView({ product }: { product: Product }) {
                                         />
                                     </button>
                                 ))}
+                                {/* Video Thumbnail Button */}
+                                {hasVideo && (
+                                    <button
+                                        onClick={() => setShowVideo(true)}
+                                        className={cn(
+                                            "relative aspect-[3/4] bg-black overflow-hidden rounded-sm border cursor-pointer transition-all flex items-center justify-center",
+                                            showVideo
+                                                ? "border-[#800000] ring-1 ring-[#800000]"
+                                                : "border-[#E5E0D8] hover:border-[#800000]/50"
+                                        )}
+                                    >
+                                        <span className="text-2xl">▶️</span>
+                                    </button>
+                                )}
                             </div>
+                        )}
+
+                        {/* Video Player — shows when video thumbnail is clicked */}
+                        {hasVideo && showVideo && (
+                            <div className="mt-4 rounded-sm overflow-hidden border border-[#E5E0D8] shadow-sm bg-black">
+                                <video
+                                    src={product.videos![0]}
+                                    controls
+                                    autoPlay
+                                    className="w-full max-h-[500px] object-contain"
+                                />
+                            </div>
+                        )}
+
+                        {/* Video Available Badge (when not playing) */}
+                        {hasVideo && !showVideo && (
+                            <button
+                                onClick={() => setShowVideo(true)}
+                                className="mt-4 w-full flex items-center justify-center gap-2 py-3 border border-[#B08D57] text-[#B08D57] text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-[#B08D57] hover:text-white transition-all duration-300"
+                            >
+                                ▶ Watch Saree Video
+                            </button>
                         )}
                     </div>
 

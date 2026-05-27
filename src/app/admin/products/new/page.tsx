@@ -10,6 +10,7 @@ export default function NewProductPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [uploadingVideo, setUploadingVideo] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         name_te: "",
@@ -20,6 +21,7 @@ export default function NewProductPage() {
         collection: "",
         description: "",
         images: [] as string[],
+        videos: [] as string[],
         in_stock: true,
     });
 
@@ -73,6 +75,46 @@ export default function NewProductPage() {
         }));
     };
 
+    const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        try {
+            setUploadingVideo(true);
+            const files = Array.from(e.target.files);
+            const newVideoUrls: string[] = [];
+
+            for (const file of files) {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('product-videos')
+                    .upload(fileName, file, { contentType: file.type });
+
+                if (uploadError) throw uploadError;
+
+                const { data } = supabase.storage
+                    .from('product-videos')
+                    .getPublicUrl(fileName);
+
+                newVideoUrls.push(data.publicUrl);
+            }
+
+            setFormData(prev => ({ ...prev, videos: [...prev.videos, ...newVideoUrls] }));
+        } catch (error) {
+            console.error('Error uploading video:', error);
+            alert('Error uploading video! Make sure you created the "product-videos" bucket in Supabase Storage.');
+        } finally {
+            setUploadingVideo(false);
+        }
+    };
+
+    const removeVideo = (indexToRemove: number) => {
+        setFormData(prev => ({
+            ...prev,
+            videos: prev.videos.filter((_, index) => index !== indexToRemove)
+        }));
+    };
+
     function generateSlug(name: string) {
         return name
             .toLowerCase()
@@ -106,6 +148,7 @@ export default function NewProductPage() {
             if (formData.name_te) payload.name_te = formData.name_te;
             if (formData.collection) payload.collection = formData.collection;
             if (formData.compareAtPrice) payload.compare_at_price = parseFloat(formData.compareAtPrice);
+            if (formData.videos.length > 0) payload.videos = formData.videos;
 
             const { error } = await supabase.from("products").insert(payload);
 
@@ -289,6 +332,49 @@ export default function NewProductPage() {
                                         {uploading ? "Uploading..." : "Click to upload images"}
                                     </span>
                                     <span className="text-xs text-gray-400">Select multiple files supported</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* VIDEO UPLOAD SECTION */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Product Videos <span className="text-gray-400 font-normal">(Optional — shows on product page)</span>
+                            </label>
+
+                            {formData.videos.length > 0 && (
+                                <div className="flex flex-col gap-3 mb-4">
+                                    {formData.videos.map((url, index) => (
+                                        <div key={index} className="relative bg-black rounded-lg overflow-hidden border border-gray-200">
+                                            <video src={url} controls className="w-full max-h-48 object-contain" />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeVideo(index)}
+                                                className="absolute top-2 right-2 bg-white rounded-full px-3 py-1 shadow-md hover:bg-red-50 text-red-500 text-xs font-bold"
+                                            >
+                                                ✕ Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="border-2 border-dashed border-purple-200 rounded-lg p-8 text-center hover:bg-purple-50/30 transition-colors">
+                                <input
+                                    type="file"
+                                    accept="video/*"
+                                    multiple
+                                    onChange={handleVideoUpload}
+                                    disabled={uploadingVideo}
+                                    className="hidden"
+                                    id="video-upload"
+                                />
+                                <label htmlFor="video-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                                    <span className="text-3xl">🎬</span>
+                                    <span className="text-gray-600 font-medium">
+                                        {uploadingVideo ? "Uploading video..." : "Click to upload a video"}
+                                    </span>
+                                    <span className="text-xs text-gray-400">MP4, MOV, WebM supported</span>
                                 </label>
                             </div>
                         </div>

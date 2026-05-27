@@ -49,9 +49,9 @@ export default function Sidebar() {
                     <span className="text-lg">🦾</span>
                 </div>
                 <div>
-                    <h1 className="text-sm font-bold gradient-text">OpenClaw</h1>
+                    <h1 className="text-sm font-bold gradient-text">Job Copilot</h1>
                     <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                        Job Apply Copilot
+                        AI-Powered Job Search
                     </p>
                 </div>
             </Link>
