@@ -100,9 +100,10 @@ export default function NewProductPage() {
             }
 
             setFormData(prev => ({ ...prev, videos: [...prev.videos, ...newVideoUrls] }));
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error uploading video:', error);
-            alert('Error uploading video! Make sure you created the "product-videos" bucket in Supabase Storage.');
+            const errMsg = (error as { message?: string })?.message || JSON.stringify(error);
+            alert(`Video upload failed:\n\n${errMsg}\n\nPlease check your Supabase "product-videos" bucket exists and is set to Public.`);
         } finally {
             setUploadingVideo(false);
         }
